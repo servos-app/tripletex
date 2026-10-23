@@ -1,0 +1,8 @@
+/.bundle/
+/coverage/
+/doc/
+/pkg/
+/tmp/
+
+# Libraries should not check in a lockfile
+/Gemfile.lock
