@@ -7,8 +7,8 @@ class Tripletex::SessionTest < Minitest::Test
     respond_with_sessions("session-token")
 
     assert_equal "session-token", build_session(now: Time.utc(2026, 10, 4, 22, 30)).authenticate { it }
-    assert_tripletex_request last_request, "POST", "/token/session/:create", auth: nil,
-      body: {consumerToken: "consumer-token", employeeToken: "employee-token", expirationDate: "2026-10-06"}
+    assert_tripletex_request last_request, "PUT", "/token/session/:create", auth: nil,
+      query: {consumerToken: "consumer-token", employeeToken: "employee-token", expirationDate: "2026-10-06"}
   end
 
   def test_expires_a_winter_token_at_oslos_next_midnight
@@ -17,7 +17,7 @@ class Tripletex::SessionTest < Minitest::Test
 
       build_session(now:).authenticate { it }
 
-      assert_equal date, JSON.parse(last_request.body).fetch("expirationDate")
+      assert_equal date, URI.decode_www_form(last_request.uri.query).to_h.fetch("expirationDate")
     end
   end
 

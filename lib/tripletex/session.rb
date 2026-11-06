@@ -37,11 +37,14 @@ module Tripletex
         post("/token/session/:createFromRefreshToken",
           refreshToken: @refresh_token, ttlSeconds: REFRESHED_TOKEN_SECONDS)
       else
-        post("/token/session/:create", **@token_pair, expirationDate: expiration_date)
+        put("/token/session/:create", **@token_pair, expirationDate: expiration_date)
       end
     end
 
     def post(path, **body) = @connection.request(:post, path, body:).value
+
+    # Tripletex takes the tokens a session is minted from as query parameters.
+    def put(path, **params) = @connection.request(:put, path, params:).value
 
     # Tripletex expires the token when its Oslo clock reaches this date. Tomorrow can leave only seconds before
     # midnight; the retry in `authenticate` covers that.

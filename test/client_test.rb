@@ -34,7 +34,7 @@ class Tripletex::ClientTest < Minitest::Test
 
     assert_equal({"id" => 1}, tripletex_client(environment: :test).customers.retrieve(1))
     assert_equal ["api-test.tripletex.tech"], requests.map { |request| request.uri.host }.uniq
-    assert_tripletex_request requests.first, "POST", "/token/session/:create", auth: nil
+    assert_tripletex_request requests.first, "PUT", "/token/session/:create", query: nil, auth: nil
     assert_tripletex_request last_request, "GET", "/customer/1"
   end
 
@@ -50,7 +50,7 @@ class Tripletex::ClientTest < Minitest::Test
 
     assert_equal({"id" => 1}, tripletex_client.customers.retrieve(1))
     assert_tripletex_request requests[1], "GET", "/customer/1", auth: ["0", "expired"]
-    assert_tripletex_request requests[2], "POST", "/token/session/:create", auth: nil
+    assert_tripletex_request requests[2], "PUT", "/token/session/:create", query: nil, auth: nil
     assert_tripletex_request requests[3], "GET", "/customer/1", auth: ["0", "fresh"]
     assert_equal 4, requests.size
   end
@@ -70,6 +70,6 @@ class Tripletex::ClientTest < Minitest::Test
 
     assert_raises(Tripletex::Errors::AuthenticationError) { tripletex_client.customers.retrieve(1) }
     assert_equal 1, requests.size
-    assert_tripletex_request last_request, "POST", "/token/session/:create", auth: nil
+    assert_tripletex_request last_request, "PUT", "/token/session/:create", query: nil, auth: nil
   end
 end

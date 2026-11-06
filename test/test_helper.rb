@@ -57,11 +57,14 @@ module TripletexTestHelpers
     )
   end
 
-  # `path` is as it goes on the wire, after `/v2` and with `>` escaped; `query` lists every parameter sent.
+  # `path` is as it goes on the wire, after `/v2` and with `>` escaped; `query` lists every parameter sent, and nil
+  # leaves the parameters unchecked.
   def assert_tripletex_request(request, method, path, query: {}, auth: ["0", "session-token"], body: nil)
     assert_equal method, request.method
     assert_equal "/v2#{path}", request.uri.path
-    assert_equal query.to_h { |name, value| [name.to_s, value] }, URI.decode_www_form(request.uri.query.to_s).to_h
+    if query
+      assert_equal query.to_h { |name, value| [name.to_s, value] }, URI.decode_www_form(request.uri.query.to_s).to_h
+    end
     assert_authorization auth, request
     assert_equal JSON.parse(body.to_json), JSON.parse(request.body) if body
   end
